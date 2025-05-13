@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Corregir Textos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.6;
+      transition: background-color 0.5s, color 0.5s;
+    }
+    h1, h2 {
+      color: #5AC8FA;
+      text-align: center;
+    }
+    textarea, #outputText {
+      width: 90%;
+      max-width: 800px;
+      padding: 15px;
+      border: 1px solid #555;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      transition: background-color 0.5s, color 0.5s, border 0.5s;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+    button, .link-button {
+      background-color: #66bb6a;
+      color: white;
+      padding: 12px 24px;
+      margin: 5px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button:hover, .link-button:hover {
+      background-color: #57a05a;
+    }
+    .highlight-danger {
+      color: #FF5C5C;
+      font-weight: bold;
+    }
+    .highlight-normal {
+      color: #5AC8FA;
+      font-weight: bold;
+    }
+    .light-mode {
+      background-color: #ffffff;
+      color: #121212;
+    }
+    .light-mode textarea, .light-mode #outputText {
+      background-color: #f0f0f0;
+      color: #121212;
+      border: 1px solid #ccc;
+    }
+    .light-mode button, .light-mode .link-button {
+      background-color: #007aff;
+    }
+    .light-mode button:hover, .light-mode .link-button:hover {
+      background-color: #005bb5;
+    }
+    /* Adaptación para pantallas grandes */
+    @media (min-width: 768px) {
+      .button-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      button, .link-button {
+        width: auto;
+        flex: 1 1 45%;
+        max-width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Auto Corregir Textos</h1>
+  <p>Pega tu texto abajo, visualiza los caracteres invisibles o corrige el contenido. También puedes aprender más sobre ellos.</p>
+
+  <textarea id="inputText" rows="10" placeholder="Pega tu texto aquí..."></textarea>
+  <div class="button-group">
+    <button onclick="cleanText()">Corregir Texto</button>
+    <button onclick="visualizeInvisibleCharacters()">Visualizar Caracteres</button>
+    <button onclick="copyCleanedText()">Copiar Texto Limpio</button>
+    <button onclick="toggleDarkMode()">Alternar Modo Claro/Oscuro</button>
+    <a class="link-button" href="https://github.com/Ultragemer/Limpiarextos/tree/main" target="_blank">Ver en GitHub</a>
+  </div>
+
+  <div id="outputText" placeholder="Aquí aparecerá el texto limpio o visualizado..."></div>
+
+  <script>
+    function cleanText() {
+      let text = document.getElementById('inputText').value;
+      let cleanedText = text
+        .replace(/[ ]/g, ' ')
+        .replace(/[ ]/g, ' ')
+        .replace(/[​]/g, '')
+        .replace(/[‎]/g, '')
+        .replace(/[‏]/g, '')
+        .replace(/[ ]/g, ' ')
+        .replace(/[﻿]/g, '')
+        .replace(/ +/g, ' ');
+      document.getElementById('outputText').innerText = cleanedText;
+    }
+
+    function visualizeInvisibleCharacters() {
+      let text = document.getElementById('inputText').value;
+      let visualized = '';
+      for (let i = 0; i < text.length; i++) {
+        let c = text[i];
+        let code = c.charCodeAt(0);
+        if (code === 0x20) {
+          visualized += ' ';
+        } else if (code === 0x0A) {
+          visualized += ' <span class="highlight-normal">CR LF\n</span> ';
+        } else if (code === 0x0D) {
+          visualized += ' <span class="highlight-normal">CR</span> ';
+        } else if (code === 0x2009) {
+          visualized += ' <span class="highlight-danger">U+2009</span> ';
+        } else if (code === 0x00A0) {
+          visualized += ' <span class="highlight-normal">U+00A0</span> ';
+        } else if (code === 0x200B) {
+          visualized += ' <span class="highlight-danger">U+200B</span> ';
+        } else if (code === 0x200E) {
+          visualized += ' <span class="highlight-normal">U+200E</span> ';
+        } else if (code === 0x200F) {
+          visualized += ' <span class="highlight-normal">U+200F</span> ';
+        } else if (code === 0x202F) {
+          visualized += ' <span class="highlight-danger">U+202F</span> ';
+        } else if (code === 0xFEFF) {
+          visualized += ' <span class="highlight-danger">U+FEFF</span> ';
+        } else {
+          visualized += c;
+        }
+      }
+      document.getElementById('outputText').innerHTML = visualized;
+    }
+
+    function copyCleanedText() {
+      let output = document.getElementById('outputText');
+      let temp = document.createElement('textarea');
+      temp.value = output.innerText;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      alert('Texto copiado al portapapeles.');
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('light-mode');
+      const output = document.getElementById('outputText');
+      const currentContent = output.innerHTML;
+      output.innerHTML = '';
+      output.innerHTML = currentContent;
+    }
+  </script>
+</body>
+</html>
