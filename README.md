@@ -12,7 +12,6 @@
 3. **Visualizar Caracteres**: Resalta los caracteres invisibles para su identificación.
 4. **Copiar Texto Limpio**: Copia al portapapeles el contenido ya corregido.
 5. **Alternar Modo Claro/Oscuro**: Cambia la apariencia de la página para comodidad visual.
-6. **¿Qué son los caracteres especiales?**: Redirige a una página educativa explicando en detalle qué son estos caracteres.
 
 ---
 
